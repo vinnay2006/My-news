@@ -1,0 +1,138 @@
+import React, { Component } from 'react'
+import Newsitem from "./Newsitem"
+import PropTypes from 'prop-types'
+
+
+export class News extends Component {
+  static defaultProps={
+    country:"us",
+    category:"sports"
+  }
+  static propTypes={
+    country:PropTypes.string,
+    category:PropTypes.string
+  }
+articles=[
+    {
+      "source": {
+        "id": "news-com-au",
+        "name": "News.com.au"
+      },
+      "author": "James Dampney",
+      "title": "Cricket says same thing on South Africa star",
+      "description": "Controversial South African quick Kagiso Rabada has ignited a gloomy start to the World Test Championship final against Australia at Lord’s.",
+      "url": "https://www.news.com.au/sport/cricket/cricket-world-says-same-thing-on-south-africa-star-kagiso-rabada/news-story/b7f38873b2986c64dd2fcc9787cc22ab",
+      "urlToImage": "https://content.api.news/v3/images/bin/a7e2580086f6fa912a22884622e8029a",
+      "publishedAt": "2025-06-11T11:18:00Z",
+      "content": "Controversial South African quick Kagiso Rabada has ignited a gloomy start to the World Test Championship final against Australia at Lord’s.\r\nLate in the first session of the opening day in London, A… [+5605 chars]"
+    },
+    {
+      "source": {  
+        "id": "bbc-sport",
+        "name": "BBC Sport"
+      },
+      "author": null,
+      "title": "South Africa vs Australia LIVE: World Test Championship final - cricket score, commentary, highlights & updates",
+      "description": "South Africa face Australia in the World Test Championship final at Lord's - follow live scores, radio commentary, video highlights and updates.",
+      "url": "http://www.bbc.co.uk/sport/cricket/live/cgkg6l182dpt",
+      "urlToImage": "https://ichef.bbci.co.uk/ace/branded_sport/1200/cpsprodpb/c7d0/live/65dede00-4609-11f0-bace-e1270fc31f5e.jpg",
+      "publishedAt": "2025-06-11T09:07:22.3295181Z",
+      "content": "Its been a World Test Championship cycle of two halves for South Africa.\r\nIn their first three series, the Proteas drew 1-1 with India (home), lost 2-0 in New Zealand (away), and drew 1-1 with West I… [+824 chars]"
+    },
+    {
+      "source": {
+        "id": "espn-cric-info",
+        "name": "ESPN Cric Info"
+      },
+      "author": null,
+      "title": "PCB hands Umar Akmal three-year ban from all cricket | ESPNcricinfo.com",
+      "description": "Penalty after the batsman pleaded guilty to not reporting corrupt approaches | ESPNcricinfo.com",
+      "url": "http://www.espncricinfo.com/story/_/id/29103103/pcb-hands-umar-akmal-three-year-ban-all-cricket",
+      "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fi%2Fcricket%2Fcricinfo%2F1099495_800x450.jpg",
+      "publishedAt": "2020-04-27T11:41:47Z",
+      "content": "Umar Akmal's troubled cricket career has hit its biggest roadblock yet, with the PCB handing him a ban from all representative cricket for three years after he pleaded guilty of failing to report det… [+1506 chars]"
+    },
+    {
+      "source": {
+        "id": "espn-cric-info",
+        "name": "ESPN Cric Info"
+      },
+      "author": null,
+      "title": "What we learned from watching the 1992 World Cup final in full again | ESPNcricinfo.com",
+      "description": "Wides, lbw calls, swing - plenty of things were different in white-ball cricket back then | ESPNcricinfo.com",
+      "url": "http://www.espncricinfo.com/story/_/id/28970907/learned-watching-1992-world-cup-final-full-again",
+      "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fi%2Fcricket%2Fcricinfo%2F1219926_1296x729.jpg",
+      "publishedAt": "2020-03-30T15:26:05Z",
+      "content": "Last week, we at ESPNcricinfo did something we have been thinking of doing for eight years now: pretend-live ball-by-ball commentary for a classic cricket match. We knew the result, yes, but we tried… [+6823 chars]"
+    }
+  ]
+constructor(props){
+    super(props);
+    console.log("this is clicked");
+    this.state={
+        articles:this.articles,
+        page:1
+    }
+    document.title=`${this.props.category}`;
+}
+ async componentDidMount(){
+  let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=e8cdb3538c9543a9901eaa71cdc77c2b&page=1&pageSize=12`
+  let data= await fetch(url);
+  let parsedData=await data.json();
+  this.setState({articles: parsedData.articles,totalResults:parsedData.totalResults})
+
+}
+handleprevclick= async ()=>{
+   let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=e8cdb3538c9543a9901eaa71cdc77c2b&page=${this.state.page-1}&pageSize=12`;
+  let data= await fetch(url);
+  let parsedData=await data.json();
+  this.setState({
+    page:this.state.page-1,
+    articles: parsedData.articles
+  })
+}
+handlenextclick= async ()=>{
+  if(this.state.page+1===Math.ceil(this.state.totalResults/12)){
+     let nextpage=this.state.page +1-Math.ceil(this.state.totalResults/12);
+    let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=e8cdb3538c9543a9901eaa71cdc77c2b&page=${nextpage}&pageSize=12`;
+  let data= await fetch(url);
+  let parsedData=await data.json();
+  this.setState({
+    page:nextpage,
+    articles: parsedData.articles
+  }) 
+}
+else{
+    let nextpage=this.state.page +1;
+    let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=e8cdb3538c9543a9901eaa71cdc77c2b&page=${nextpage}&pageSize=12`;
+  let data= await fetch(url);
+  let parsedData=await data.json();
+  this.setState({
+    page:nextpage,
+    articles: parsedData.articles
+  })
+}
+}
+  render() {
+    return (
+      <>
+       <div className="container my-2">
+        <div className="row">
+        <h2 className="text-center">MyMonkey-Top Headlines {this.props.category}</h2>
+        {this.state.articles.map((element)=>{
+          return  <div class="col-md-4">
+        <Newsitem  key={element.url} title={element.title?element.title.slice(0,50):""} description={element.description?element.description.slice(0,50):""} newsurl={element.urlToImage} pageurl={element.url} author={element.author?element.author:"unknown"} date={element.publishedAt}/>
+         </div> 
+        })}    
+         </div>
+      </div>
+       <div className="container d-flex justify-content-between">
+        <button  disabled={this.state.page<=1} className="btn btn-primary"  onClick={this.handleprevclick} >PREVIOUS</button>
+        <button   className="btn btn-primary"   onClick={this.handlenextclick} >NEXT</button>
+       </div>
+       </>
+    )
+  }
+}
+
+export default News
